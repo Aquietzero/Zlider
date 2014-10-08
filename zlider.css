@@ -1,0 +1,38 @@
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+.zlider {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.zlider .zlider-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  opacity: 1;
+
+  top: 0;
+  left: 0;
+
+  transition-property: all;
+  transition-timing-function: ease;
+  transition-duration: 0.5s;
+
+  -webkit-transition-property: all;
+  -webkit-transition-timing-function: ease;
+  -webkit-transition-duration: 0.5s;
+}
+
+.zlider .zlider-wrapper .title {
+  margin: 0;
+  padding: 100px;
+  text-align: center;
+  font-size: 3em;
+}
+
