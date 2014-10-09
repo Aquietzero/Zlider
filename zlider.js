@@ -6,6 +6,9 @@
  * }
  */
 (function () {
+  var prefixes = ['-webkit', '-moz'];
+  var prefixAttrs = ['transition-duration', 'transition-property'];
+
   var Zlider = function (selector, config) {
     this.el = document.querySelector(selector);
     this.init(config || {});
@@ -120,6 +123,12 @@
   Zlider.prototype.css = function (el, styles) {
     for (var attr in styles) {
       el.style[attr] = styles[attr];
+      // Setup prefixes for those attributes which need to be prefixed.
+      if (prefixAttrs.indexOf(attr) > 0) {
+        for (var i = 0; i < prefixes.length; ++i) {
+          el.style[[prefixes[i], attr].join('-')] = styles[attr];
+        }
+      }
     }
   },
 
@@ -135,7 +144,6 @@
 
     this.css(curr, {
       'transition-duration': this.config.duration,
-      '-webkit-transition-duration': this.config.duration,
       'top': this.height + 'px'
     });
   }
@@ -152,7 +160,6 @@
 
     this.css(next, {
       'transition-duration': this.config.duration,
-      '-webkit-transition-duration': this.config.duration,
       'top': '0px'
     });
   }
@@ -171,7 +178,6 @@
 
     this.css(slider, {
       'transition-duration': this.config.duration,
-      '-webkit-transition-duration': this.config.duration,
       'top': top
     });
   }
@@ -189,7 +195,6 @@
     var top = parseInt(slider.style.top.replace('px', ''));
     this.css(slider, {
       'transition-duration': '0s',
-      '-webkit-transition-duration': '0s',
       'top': top + delta + 'px'
     });
   }
