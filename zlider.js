@@ -23,9 +23,12 @@
     this.height = window.innerHeight;
 
     this.config = {};
-    this.config.threshold = (config.threshold || 0.2) * this.height;
     this.config.duration = (config.duration || 0.5) + 's';
     this.config.parallax = config.parallax || 0.3;
+    this.config.horizontal = config.horizontal || false;
+    this.config.threshold = this.config.horizontal ?
+      (config.threshold || 0.2) * this.width :
+      (config.threshold || 0.2) * this.height;
 
     this.touching = false;
 
@@ -51,7 +54,13 @@
 
     for (var i = 1; i < this.sliders.length; ++i) {
       var slider = this.sliders[i];
-      slider.style.top = this.height + 'px';
+      if (this.config.horizontal) {
+        slider.style.top = '0px';
+        slider.style.left = this.width + 'px';
+      } else {
+        slider.style.top = this.height + 'px';
+        slider.style.left = '0px';
+      }
     }
   }
 
@@ -73,8 +82,12 @@
     document.addEventListener('touchmove', function (e) {
       e.preventDefault();
 
-      var y = e.touches[0].clientY;
-      var delta = y - this.touchingPosition.y;
+      var delta;
+      if (this.config.horizontal) {
+        delta = e.touches[0].clientX - this.touchingPosition.x;
+      } else {
+        delta = e.touches[0].clientY - this.touchingPosition.y;
+      }
 
       if (!this.direction) {
         this.direction = delta > 0 ? 'prev' : 'next';
@@ -101,7 +114,9 @@
     }.bind(this));
 
     document.addEventListener('touchend', function (e) {
-      var delta = Math.abs(this.touchingPosition.y - this.beginPosition.y);
+      var delta = this.config.horizontal ?
+        Math.abs(this.beginPosition.x - this.touchingPosition.x) :
+        Math.abs(this.touchingPosition.y - this.beginPosition.y);
       if (delta > this.config.threshold) {
         if (this.direction == 'next') {
           this.next();
@@ -145,11 +160,13 @@
 
     this.css(curr, {
       'transition-duration': this.config.duration,
-      'top': this.height + 'px'
+      'top': this.config.horizontal ? 0 : this.height + 'px',
+      'left': this.config.horizontal ? this.width + 'px' : 0
     });
     this.css(prev, {
       'transition-duration': this.config.duration,
-      'top': 0
+      'top': '0px',
+      'left': '0px'
     });
   }
 
@@ -165,37 +182,43 @@
 
     this.css(curr, {
       'transition-duration': this.config.duration,
-      'top': -this.height * this.config.parallax + 'px'
+      'top': this.config.horizontal ? '0px' : -this.height * this.config.parallax + 'px',
+      'left': this.config.horizontal ? -this.width * this.config.parallax + 'px' : '0px'
     });
     this.css(next, {
       'transition-duration': this.config.duration,
-      'top': '0px'
+      'top': '0px',
+      'left': '0px'
     });
   }
 
   Zlider.prototype.reset = function (direction) {
-    var prev, curr, prevTop, currTop;
+    var prev, curr, prevPos, currPos;
     if (direction == 'next') {
       if (this.page == this.max) return;
       prev = this.sliders[this.page];
       curr = this.sliders[this.page + 1];
-      prevTop = '0px';
-      currTop = this.height + 'px';
+      prevPos = '0px';
+      currPos = this.config.horizontal ? this.width + 'px' : this.height + 'px';
     } else {
       if (this.page == 0) return;
       prev = this.sliders[this.page - 1];
       curr = this.sliders[this.page];
-      prevTop = this.height * this.config.parallax + 'px';
-      currTop = '0px';
+      prevPos = this.config.horizontal ?
+        -this.width * this.config.parallax + 'px' :
+        -this.height * this.config.parallax + 'px';
+      currPos = '0px';
     }
 
     this.css(prev, {
       'transition-duration': this.config.duration,
-      'top': prevTop
+      'top': this.config.horizontal ? '0px' : prevPos,
+      'left': this.config.horizontal ? prevPos : '0px'
     });
     this.css(curr, {
       'transition-duration': this.config.duration,
-      'top': currTop
+      'top': this.config.horizontal ? '0px' : currPos,
+      'left': this.config.horizontal ? currPos : '0px',
     });
   }
 
@@ -211,14 +234,18 @@
       curr = this.sliders[this.page];
     }
 
-    var top = parseInt(curr.style.top.replace('px', ''));
+    var pos = this.config.horizontal ?
+      parseInt(curr.style.left.replace('px', '')) :
+      parseInt(curr.style.top.replace('px', ''));
     this.css(curr, {
       'transition-duration': '0s',
-      'top': top + delta + 'px'
+      'top': this.config.horizontal ? '0px' : pos + delta + 'px',
+      'left': this.config.horizontal ? pos + delta + 'px' : '0px',
     });
     this.css(prev, {
       'transition-duration': '0s',
-      'top': -(this.height - top - delta) * this.config.parallax + 'px'
+      'top': this.config.horizontal ? '0px' : -(this.height - pos - delta) * this.config.parallax + 'px',
+      'left': this.config.horizontal ? -(this.width - pos - delta) * this.config.parallax + 'px' : '0px',
     });
   }
 
