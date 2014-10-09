@@ -141,50 +141,6 @@
     }
   },
 
-  Zlider.prototype.prev = function () {
-    if (this.page == 0) {
-      return;
-    }
-
-    this.page -= 1;
-
-    var curr = this.sliders[this.page + 1];
-    var prev = this.sliders[this.page];
-
-    this.css(curr, {
-      'transition-duration': this.config.duration,
-      'top': this.config.horizontal ? 0 : this.height + 'px',
-      'left': this.config.horizontal ? this.width + 'px' : 0
-    });
-    this.css(prev, {
-      'transition-duration': this.config.duration,
-      'top': '0px',
-      'left': '0px'
-    });
-  }
-
-  Zlider.prototype.next = function () {
-    if (this.page == this.max) {
-      return;
-    }
-
-    this.page += 1;
-
-    var curr = this.sliders[this.page - 1];
-    var next = this.sliders[this.page];
-
-    this.css(curr, {
-      'transition-duration': this.config.duration,
-      'top': this.config.horizontal ? '0px' : -this.height * this.config.parallax + 'px',
-      'left': this.config.horizontal ? -this.width * this.config.parallax + 'px' : '0px'
-    });
-    this.css(next, {
-      'transition-duration': this.config.duration,
-      'top': '0px',
-      'left': '0px'
-    });
-  }
-
   Zlider.prototype.reset = function (direction) {
     var prev, curr, prevPos, currPos;
     if (direction == 'next') {
@@ -240,6 +196,54 @@
       'top': this.config.horizontal ? '0px' : -(this.height - pos - delta) * this.config.parallax + 'px',
       'left': this.config.horizontal ? -(this.width - pos - delta) * this.config.parallax + 'px' : '0px',
     });
+  }
+
+  Zlider.prototype.prev = function () {
+    if (this.page == 0) {
+      return;
+    }
+
+    this.page -= 1;
+
+    var curr = this.sliders[this.page + 1];
+    var prev = this.sliders[this.page];
+
+    this.css(curr, {
+      'transition-duration': this.config.duration,
+      'top': this.config.horizontal ? 0 : this.height + 'px',
+      'left': this.config.horizontal ? this.width + 'px' : 0
+    });
+    this.css(prev, {
+      'transition-duration': this.config.duration,
+      'top': '0px',
+      'left': '0px'
+    });
+  }
+
+  Zlider.prototype.next = function () {
+    if (this.page == this.max) {
+      return;
+    }
+
+    this.page += 1;
+
+    var curr = this.sliders[this.page - 1];
+    var next = this.sliders[this.page];
+
+    this.css(curr, {
+      'transition-duration': this.config.duration,
+      'top': this.config.horizontal ? '0px' : -this.height * this.config.parallax + 'px',
+      'left': this.config.horizontal ? -this.width * this.config.parallax + 'px' : '0px'
+    });
+    this.css(next, {
+      'transition-duration': this.config.duration,
+      'top': '0px',
+      'left': '0px'
+    });
+  }
+
+  Zlider.prototype.currentPage = function () {
+    return this.page;
   }
 
   // For amd environment.

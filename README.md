@@ -41,15 +41,21 @@ Configuration
 
 ## Api
 
-`Zlider#prev` : Previous page.
+`Zlider#prev`: Previous page.
 
 ```javascript
 zlider.prev();
 ```
 
-`Zlider#next` : Next page.
+`Zlider#next`: Next page.
 
 ```javascript
 zlider.next();
+```
+
+`Zlider#currentPage`: Get current page which starts from 0.
+
+```javascript
+zlider.currentPage();
 ```
 
