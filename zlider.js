@@ -6,9 +6,9 @@
  *   parallax: 0.3 (Parallax proportion.)
  * }
  */
-(function () {
+(function (root) {
   var prefixes = ['-webkit', '-moz'];
-  var prefixAttrs = ['transition-duration', 'transition-property'];
+  var prefixAttrs = ['transition-duration', 'transition-property', 'transform'];
 
   var Zlider = function (selector, config) {
     this.el = document.querySelector(selector);
@@ -26,8 +26,6 @@
     this.config.threshold = (config.threshold || 0.2) * this.height;
     this.config.duration = (config.duration || 0.5) + 's';
     this.config.parallax = config.parallax || 0.3;
-
-    console.log(this.config);
 
     this.touching = false;
 
@@ -60,7 +58,6 @@
   Zlider.prototype.bindEvents = function () {
     // Keyboard events are only used for debug.
     document.addEventListener('keyup', function (e) {
-      console.log(e.keyCode);
       switch (e.keyCode) {
         case 37:
         case 38:
@@ -226,5 +223,15 @@
   }
 
   var slider = new Zlider('.zlider');
-})();
+
+  // For amd environment.
+  if (typeof define === 'function' && define.amd) {
+    define(function() {
+      return Zlider;
+    });
+  // For browser environment.
+  } else {
+    root.Zlider = Zlider;
+  }
+})(this);
 
