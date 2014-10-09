@@ -140,11 +140,15 @@
     this.page -= 1;
 
     var curr = this.sliders[this.page + 1];
-    var next = this.sliders[this.page];
+    var prev = this.sliders[this.page];
 
     this.css(curr, {
       'transition-duration': this.config.duration,
       'top': this.height + 'px'
+    });
+    this.css(prev, {
+      'transition-duration': this.config.duration,
+      'top': 0
     });
   }
 
@@ -158,6 +162,10 @@
     var curr = this.sliders[this.page - 1];
     var next = this.sliders[this.page];
 
+    this.css(curr, {
+      'transition-duration': this.config.duration,
+      'top': -this.height / 3 + 'px'
+    });
     this.css(next, {
       'transition-duration': this.config.duration,
       'top': '0px'
@@ -165,37 +173,51 @@
   }
 
   Zlider.prototype.reset = function (direction) {
-    var top, slider;
+    var prev, curr, prevTop, currTop;
     if (direction == 'up') {
       if (this.page == this.max) return;
-      slider = this.sliders[this.page + 1];
-      top = this.height + 'px';
+      prev = this.sliders[this.page];
+      curr = this.sliders[this.page + 1];
+      prevTop = '0px';
+      currTop = this.height + 'px';
     } else {
       if (this.page == 0) return;
-      slider = this.sliders[this.page];
-      top = '0px';
+      prev = this.sliders[this.page - 1];
+      curr = this.sliders[this.page];
+      prevTop = this.height / 3 + 'px';
+      currTop = '0px';
     }
 
-    this.css(slider, {
+    this.css(prev, {
       'transition-duration': this.config.duration,
-      'top': top
+      'top': prevTop
+    });
+    this.css(curr, {
+      'transition-duration': this.config.duration,
+      'top': currTop
     });
   }
 
   Zlider.prototype.move = function (direction, delta) {
-    var slider;
+    var prev, curr;
     if (direction == 'up') {
       if (this.page == this.max) return;
-      slider = this.sliders[this.page + 1];
+      prev = this.sliders[this.page];
+      curr = this.sliders[this.page + 1];
     } else {
       if (this.page == 0) return;
-      slider = this.sliders[this.page];
+      prev = this.sliders[this.page - 1]
+      curr = this.sliders[this.page];
     }
 
-    var top = parseInt(slider.style.top.replace('px', ''));
-    this.css(slider, {
+    var top = parseInt(curr.style.top.replace('px', ''));
+    this.css(curr, {
       'transition-duration': '0s',
       'top': top + delta + 'px'
+    });
+    this.css(prev, {
+      'transition-duration': '0s',
+      'top': -Math.floor((this.height - top - delta) / 3) + 'px'
     });
   }
 
