@@ -21,14 +21,21 @@ Template is just simple as the following.
 </div>
 ```
 
-Add the following javascript to where it belongs.
+Add the following javascript to where it belongs. (The values below are default values.)
 
 ```javascript
 var zlider = new Zlider('.zlider', {
   threshold: 0.1,
-  duration: 0.7
+  duration: 0.7,
+  parallax: 0.3
 });
 ```
+
+Configuration
+
++ `threshold`: If the distance of a touch move is larger than `window.innerHeight` * `threshold`, then a page turning is ignited.
++ `duration`: The time duration of a sliding.
++ `parallax`: The proportion of the distance of background moving and that of foreground moving.
 
 ## Api
 

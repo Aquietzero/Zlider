@@ -3,6 +3,7 @@
  * config: {
  *   threshold: 0.2 (Multiplied by window height.)
  *   duration: 0.5s (Time duration of the whole slide animation.)
+ *   parallax: 0.3 (Parallax proportion.)
  * }
  */
 (function () {
@@ -24,6 +25,9 @@
     this.config = {};
     this.config.threshold = (config.threshold || 0.2) * this.height;
     this.config.duration = (config.duration || 0.5) + 's';
+    this.config.parallax = config.parallax || 0.3;
+
+    console.log(this.config);
 
     this.touching = false;
 
@@ -164,7 +168,7 @@
 
     this.css(curr, {
       'transition-duration': this.config.duration,
-      'top': -this.height / 3 + 'px'
+      'top': -this.height * this.config.parallax + 'px'
     });
     this.css(next, {
       'transition-duration': this.config.duration,
@@ -184,7 +188,7 @@
       if (this.page == 0) return;
       prev = this.sliders[this.page - 1];
       curr = this.sliders[this.page];
-      prevTop = this.height / 3 + 'px';
+      prevTop = this.height * this.config.parallax + 'px';
       currTop = '0px';
     }
 
@@ -217,7 +221,7 @@
     });
     this.css(prev, {
       'transition-duration': '0s',
-      'top': -Math.floor((this.height - top - delta) / 3) + 'px'
+      'top': -(this.height - top - delta) * this.config.parallax + 'px'
     });
   }
 
