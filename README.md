@@ -1,6 +1,6 @@
 # Zlider
 
-Usage if dead simple.
+Usage is dead simple.
 
 Template is just simple as the following.
 
