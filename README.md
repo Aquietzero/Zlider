@@ -1,5 +1,9 @@
 # Zlider
 
+A simple slider for presentation. (No compatibility is considered at this stage.)
+
+## Basic usage
+
 Usage is dead simple.
 
 Template is just simple as the following.
@@ -25,3 +29,18 @@ var zlider = new Zlider('.zlider', {
   duration: 0.7
 });
 ```
+
+## Api
+
+`Zlider#prev` : Previous page.
+
+```javascript
+zlider.prev();
+```
+
+`Zlider#next` : Next page.
+
+```javascript
+zlider.next();
+```
+
