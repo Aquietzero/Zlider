@@ -77,7 +77,7 @@
       var delta = y - this.touchingPosition.y;
 
       if (!this.direction) {
-        this.direction = delta > 0 ? 'down' : 'up';
+        this.direction = delta > 0 ? 'prev' : 'next';
       }
 
       this.move(this.direction, delta);
@@ -103,7 +103,7 @@
     document.addEventListener('touchend', function (e) {
       var delta = Math.abs(this.touchingPosition.y - this.beginPosition.y);
       if (delta > this.config.threshold) {
-        if (this.direction == 'up') {
+        if (this.direction == 'next') {
           this.next();
         } else {
           this.prev();
@@ -175,7 +175,7 @@
 
   Zlider.prototype.reset = function (direction) {
     var prev, curr, prevTop, currTop;
-    if (direction == 'up') {
+    if (direction == 'next') {
       if (this.page == this.max) return;
       prev = this.sliders[this.page];
       curr = this.sliders[this.page + 1];
@@ -201,7 +201,7 @@
 
   Zlider.prototype.move = function (direction, delta) {
     var prev, curr;
-    if (direction == 'up') {
+    if (direction == 'next') {
       if (this.page == this.max) return;
       prev = this.sliders[this.page];
       curr = this.sliders[this.page + 1];
