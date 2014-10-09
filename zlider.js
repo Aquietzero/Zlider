@@ -1,11 +1,4 @@
 
-/*
- * config: {
- *   threshold: 0.2 (Multiplied by window height.)
- *   duration: 0.5s (Time duration of the whole slide animation.)
- *   parallax: 0.3 (Parallax proportion.)
- * }
- */
 (function (root) {
   var prefixes = ['-webkit', '-moz'];
   var prefixAttrs = ['transition-duration', 'transition-property', 'transform'];
@@ -27,8 +20,8 @@
     this.config.parallax = config.parallax || 0.3;
     this.config.horizontal = config.horizontal || false;
     this.config.threshold = this.config.horizontal ?
-      (config.threshold || 0.2) * this.width :
-      (config.threshold || 0.2) * this.height;
+      ((config.threshold || 0.2) * this.width) :
+      ((config.threshold || 0.2) * this.height);
 
     this.touching = false;
 
@@ -248,8 +241,6 @@
       'left': this.config.horizontal ? -(this.width - pos - delta) * this.config.parallax + 'px' : '0px',
     });
   }
-
-  var slider = new Zlider('.zlider');
 
   // For amd environment.
   if (typeof define === 'function' && define.amd) {
