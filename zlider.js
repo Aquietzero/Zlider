@@ -1,24 +1,35 @@
 
+/*
+ * config: {
+ *   threshold: 0.2 (Multiplied by window height.)
+ *   duration: 0.5s (Time duration of the whole slide animation.)
+ * }
+ */
 (function () {
-  var Zlider = function (selector) {
+  var Zlider = function (selector, config) {
     this.el = document.querySelector(selector);
-
-    this.init();
+    this.init(config || {});
   }
   
-  Zlider.prototype.init = function () {
+  Zlider.prototype.init = function (config) {
     this.page = 0;
     this.max = this.getMax();
 
     this.width = window.innerWidth;
     this.height = window.innerHeight;
 
+    this.config = {};
+    this.config.threshold = (config.threshold || 0.2) * this.height;
+    this.config.duration = (config.duration || 0.5) + 's';
+
     this.touching = false;
 
+    // Begin position of each series of touch events.
     this.beginPosition = {
       x: 0,
       y: 0
     }
+    // Previous position of each touch move.
     this.touchingPosition = {
       x: 0,
       y: 0
@@ -40,6 +51,7 @@
   }
 
   Zlider.prototype.bindEvents = function () {
+    // Keyboard events are only used for debug.
     document.addEventListener('keyup', function (e) {
       console.log(e.keyCode);
       switch (e.keyCode) {
@@ -64,11 +76,7 @@
         this.direction = delta > 0 ? 'down' : 'up';
       }
 
-      if (this.direction == 'up') {
-        this.moveNext(delta);
-      } else {
-        this.moveCurr(delta);
-      }
+      this.move(this.direction, delta);
 
       this.touchingPosition = {
         x: e.touches[0].clientX,
@@ -90,18 +98,14 @@
 
     document.addEventListener('touchend', function (e) {
       var delta = Math.abs(this.touchingPosition.y - this.beginPosition.y);
-      if (delta > this.height / 5) {
+      if (delta > this.config.threshold) {
         if (this.direction == 'up') {
           this.next();
         } else {
           this.prev();
         }
       } else {
-        if (this.direction == 'up') {
-          this.resetNext();
-        } else {
-          this.resetCurr();
-        }
+        this.reset(this.direction);
       }
 
       this.touching = false;
@@ -113,6 +117,12 @@
     return document.querySelectorAll('.zlider-wrapper').length - 1;
   }
 
+  Zlider.prototype.css = function (el, styles) {
+    for (var attr in styles) {
+      el.style[attr] = styles[attr];
+    }
+  },
+
   Zlider.prototype.prev = function () {
     if (this.page == 0) {
       return;
@@ -123,9 +133,11 @@
     var curr = this.sliders[this.page + 1];
     var next = this.sliders[this.page];
 
-    curr.style['transition-duration'] = '0.5s';
-    curr.style['-webkit-transition-duration'] = '0.5s';
-    curr.style.top = this.height + 'px';
+    this.css(curr, {
+      'transition-duration': this.config.duration,
+      '-webkit-transition-duration': this.config.duration,
+      'top': this.height + 'px'
+    });
   }
 
   Zlider.prototype.next = function () {
@@ -138,60 +150,50 @@
     var curr = this.sliders[this.page - 1];
     var next = this.sliders[this.page];
 
-    next.style['transition-duration'] = '0.5s';
-    next.style['-webkit-transition-duration'] = '0.5s';
-    next.style.top = 0;
+    this.css(next, {
+      'transition-duration': this.config.duration,
+      '-webkit-transition-duration': this.config.duration,
+      'top': '0px'
+    });
   }
 
-  Zlider.prototype.resetCurr = function () {
-    if (this.page == 0) {
-      return;
+  Zlider.prototype.reset = function (direction) {
+    var top, slider;
+    if (direction == 'up') {
+      if (this.page == this.max) return;
+      slider = this.sliders[this.page + 1];
+      top = this.height + 'px';
+    } else {
+      if (this.page == 0) return;
+      slider = this.sliders[this.page];
+      top = '0px';
     }
 
-    var curr = this.sliders[this.page];
-
-    curr.style['transition-duration'] = '0.5s';
-    curr.style['-webkit-transition-duration'] = '0.5s';
-    curr.style.top = '0px';
+    this.css(slider, {
+      'transition-duration': this.config.duration,
+      '-webkit-transition-duration': this.config.duration,
+      'top': top
+    });
   }
 
-  Zlider.prototype.resetNext = function () {
-    if (this.page == this.max) {
-      return;
+  Zlider.prototype.move = function (direction, delta) {
+    var slider;
+    if (direction == 'up') {
+      if (this.page == this.max) return;
+      slider = this.sliders[this.page + 1];
+    } else {
+      if (this.page == 0) return;
+      slider = this.sliders[this.page];
     }
 
-    var next = this.sliders[this.page + 1];
-
-    next.style['transition-duration'] = '0.5s';
-    next.style['-webkit-transition-duration'] = '0.5s';
-    next.style.top = this.height + 'px';
-  }
-
-  Zlider.prototype.moveCurr = function (delta) {
-    if (this.page == 0) {
-      return;
-    }
-
-    var curr = this.sliders[this.page];
-
-    var top = parseInt(curr.style.top.replace('px', ''));
-    curr.style['transition-duration'] = '0s';
-    curr.style['-webkit-transition-duration'] = '0s';
-    curr.style.top = top + delta + 'px';
-  }
-
-  Zlider.prototype.moveNext = function (delta) {
-    if (this.page == this.max) {
-      return;
-    }
-
-    var next = this.sliders[this.page + 1];
-
-    var top = parseInt(next.style.top.replace('px', ''));
-    next.style['transition-duration'] = '0s';
-    next.style['-webkit-transition-duration'] = '0s';
-    next.style.top = top + delta + 'px';
+    var top = parseInt(slider.style.top.replace('px', ''));
+    this.css(slider, {
+      'transition-duration': '0s',
+      '-webkit-transition-duration': '0s',
+      'top': top + delta + 'px'
+    });
   }
 
   var slider = new Zlider('.zlider');
 })();
+
