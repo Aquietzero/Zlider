@@ -22,8 +22,11 @@
     this.config.threshold = this.config.horizontal ?
       ((config.threshold || 0.2) * this.width) :
       ((config.threshold || 0.2) * this.height);
+    this.config.auto = config.auto || false;
+    this.config.interval = config.interval || 6000;
 
     this.touching = false;
+    this.timer;
 
     // Begin position of each series of touch events.
     this.beginPosition = {
@@ -40,10 +43,17 @@
 
     this.setStyles();
     this.bindEvents();
+
+    if (this.config.auto) {
+      this.start();
+    }
   }
 
   Zlider.prototype.setStyles = function () {
     this.sliders = document.querySelectorAll('.zlider-wrapper');
+
+    this.sliders[0].style.top = '0px';
+    this.sliders[0].style.left = '0px';
 
     for (var i = 1; i < this.sliders.length; ++i) {
       var slider = this.sliders[i];
@@ -222,10 +232,14 @@
 
   Zlider.prototype.next = function () {
     if (this.page == this.max) {
+      if (this.config.auto) {
+        this.setStyles();
+        this.page = 0;
+      }
       return;
+    } else {
+      this.page += 1;
     }
-
-    this.page += 1;
 
     var curr = this.sliders[this.page - 1];
     var next = this.sliders[this.page];
@@ -244,6 +258,17 @@
 
   Zlider.prototype.currentPage = function () {
     return this.page;
+  }
+
+  Zlider.prototype.start = function () {
+    if (!this.timer) {
+      this.timer = setInterval(this.next.bind(this), this.config.interval);
+    }
+  }
+
+  Zlider.prototype.stop = function () {
+    clearInterval(this.timer);
+    this.timer = null;
   }
 
   // For amd environment.

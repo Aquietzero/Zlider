@@ -28,7 +28,9 @@ var zlider = new Zlider('.zlider', {
   threshold: 0.1,
   duration: 0.7,
   parallax: 0.3,
-  horizontal: false
+  horizontal: false,
+  auto: false,
+  interval: 6000
 });
 ```
 
@@ -38,6 +40,8 @@ Configuration
 + `duration`: The time duration of a sliding.
 + `parallax`: The proportion of the distance of background moving and that of foreground moving.
 + `horizontal`: Slide horizontally or not which is default to be false.
++ `auto`: Slide automatically or not.
++ `interval`: Interval between 2 slides(in milliseconds).
 
 ## Api
 
@@ -59,3 +63,15 @@ zlider.next();
 zlider.currentPage();
 ```
 
+`Zlider#start`: Start the automatic slider manually.
+
+```javascript
+zlider.start();
+```
+
+
+`Zlider#stop`: Stop the automatic slider manually.
+
+```javascript
+zlider.stop();
+```
